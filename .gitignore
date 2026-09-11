@@ -3,5 +3,7 @@ data/raw/olist/
 data/raw/us_accidents/
 venv/
 .ipynb_checkpoints/
+__pycache__/
+*.py[cod]
 *.sys
 .DS_Store
