@@ -18,6 +18,41 @@ Phân công 6 thành viên: xem chi tiết trong [`HUONG_DAN_LAM_BAI.md`](./HUON
 
 ---
 
+## Đồ án tổng hợp – US Accidents
+
+Đồ án phân tích các tổ hợp điều kiện liên hệ với **mức ảnh hưởng giao thông `Severity` 3-4** trong snapshot US Accidents gồm California và Texas. `Severity` không phải số thương vong. Hai kỹ thuật được kết hợp là mô hình phân lớp nhị phân và luật kết hợp; phân lớp bốn mức chỉ giữ làm nền kỹ thuật. Notebook chính là [`phan-tich-tong-hop.ipynb`](./phan-tich-tong-hop.ipynb).
+
+Phần D.2-D.6 sử dụng nguồn dữ liệu duy nhất:
+
+```text
+data/processed/us_accidents/accidents_preprocessed.csv
+```
+
+Thứ tự thực thi:
+
+1. Tạo môi trường và cài `requirements.txt`.
+2. Mở repository ở thư mục gốc, chọn kernel của môi trường vừa tạo.
+3. Mở `phan-tich-tong-hop.ipynb`, chọn **Restart Kernel & Run All**.
+4. Kiểm tra artifacts được tạo trong `artifacts/`, đặc biệt `split_us_accidents.csv`, `data_bias_audit.csv`, `model_predictions_baseline.csv`, `rules_train.csv`, `rules_model_test.csv` và `rules_stratified_robustness.csv`.
+
+Notebook tạo split 80/20 chung theo `ID`, stratify theo `Severity`, seed 42. `Distance(mi)` bị loại khỏi feature nhận diện sớm; 7.236 dòng thiếu thời gian được giữ là `Unknown`. Imputation, scaling, calibration, lựa chọn mô hình và khai phá luật chỉ fit trên train; test chỉ dùng để đánh giá cuối, đối chiếu rules-model và kiểm tra độ bền theo Source/State.
+
+Các tài liệu liên quan:
+
+- [`artifacts/data_contract_us_accidents.md`](./artifacts/data_contract_us_accidents.md): schema, nhãn, feature whitelist và quy tắc transaction.
+- [`docs/nhat_ky_quyet_dinh.md`](./docs/nhat_ky_quyet_dinh.md): các quyết định phân tích và bằng chứng.
+- [`data/README.md`](./data/README.md): nguồn dữ liệu sử dụng trong đồ án.
+- Kế hoạch triển khai chi tiết được lưu cục bộ và không thuộc bộ file bàn giao trên Git.
+
+Để chạy lại notebook bằng dòng lệnh:
+
+```powershell
+python -m nbconvert --to notebook --execute .\phan-tich-tong-hop.ipynb `
+  --output phan-tich-tong-hop.ipynb --ExecutePreprocessor.timeout=900
+```
+
+---
+
 ## 1. Cài Python
 
 Kiểm tra đã có Python chưa (PowerShell):
@@ -26,7 +61,7 @@ Kiểm tra đã có Python chưa (PowerShell):
 python --version
 ```
 
-Nếu chưa có, tải tại: https://www.python.org/ (chọn bản ≥ 3.10, khi cài nhớ tick **Add Python to PATH**).
+Nếu chưa có, tải tại: https://www.python.org/ (chọn bản ≥ 3.9, khi cài nhớ tick **Add Python to PATH**). Môi trường đồ án hiện đã kiểm tra trên Python 3.9.13.
 
 ---
 
@@ -80,7 +115,7 @@ Kiểm tra:
 pip list
 ```
 
-`requirements.txt` gồm: `pandas`, `numpy`, `matplotlib`, `seaborn`, `scikit-learn`, `mlxtend`, `jupyter`, `ipykernel`.
+`requirements.txt` gồm các thư viện xử lý dữ liệu, trực quan hóa, notebook, phân lớp, luật kết hợp và xử lý mất cân bằng; phiên bản cụ thể được khóa trực tiếp trong file.
 
 ---
 
